@@ -2,7 +2,7 @@
 import math
 
 class CableCalculator:
-    def __init__(self, spool_radius_mm, cable_diameter_mm, ppr):
+    def __init__(self, spool_radius_mm, cable_diameter_mm, ppr=20):
         """
         Initialize for layer-based spool winding.
         
@@ -39,7 +39,7 @@ class CableCalculator:
             Displacement in mm (float)
         """
         N = pulse_count / self.ppr  # Number of complete rotations
-        R_core = self.spool_diameter_mm / 2.0
+        R_core = self.spool_radius_mm
         d = self.cable_diameter_mm
 
         theta_max = 2 * math.pi * N

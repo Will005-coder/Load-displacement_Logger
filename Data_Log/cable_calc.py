@@ -1,59 +1,83 @@
-# cable_calc.py — Layer-based spool displacement (corrected)
+# cable_calc.py — Layer-based spool displacement 
 import math
 
 class CableCalculator:
-    def __init__(self, spool_diameter_mm, cable_diameter_mm, ppr=20):
+    def __init__(self, spool_radius_mm, cable_diameter_mm, ppr):
         """
         Initialize for layer-based spool winding.
         
-        Each complete rotation adds one full layer; diameter increases by 2×cable_diameter.
+        Each complete rotation adds one full layer; radius increases by `(c/2 pi) * theta
         
         Args:
-            spool_diameter_mm: Initial spool diameter (mm)
-            cable_diameter_mm: Cable thickness/diameter (mm)
+            spool_radius_mm (s): Spool radius at base (mm)
+            cable_diameter_mm (c): Cable thickness/diameter (mm)
             ppr: Pulses per full rotation
         """
-        self.spool_diameter_mm = spool_diameter_mm
+        self.spool_radius_mm = spool_radius_mm
         self.cable_diameter_mm = cable_diameter_mm
         self.ppr = ppr
     
     def calculate_displacement(self, pulse_count):
         """
-        Calculate true cable displacement accounting for growing diameter per layer.
-        
-        Formula: s = π·N·(d + c·(N-1))
-        
+        Calculate true cable displacement accounting for growing radius following
+        angle increase, in a helical/spiral path (Archimedean spiral arc length).
+
+        Formula:
+            L = ∫[0, 2πN] sqrt(r(θ)² + (dr/dθ)²) dθ
+
         Where:
-          N = number of rotations (layers)
-          d = initial spool diameter
-          c = cable diameter
-        
+            r(θ) = R_core + (d / (2π))·θ      (spiral radius at angle θ)
+            dr/dθ = d / (2π)                  (constant radial growth rate)
+            R_core = core/spool radius (mm)
+            d      = cable diameter, i.e. radial growth per full revolution (mm)
+            N      = number of complete rotations (layers)
+
         Args:
             pulse_count: Total encoder pulses since reset
-        
+
         Returns:
             Displacement in mm (float)
         """
         N = pulse_count / self.ppr  # Number of complete rotations
-        d = self.spool_diameter_mm
-        c = self.cable_diameter_mm
-        
-        # s = π·N·(d + c·(N-1))
-        s = math.pi * N * (d + c * (N - 1))
-        return s
+        R_core = self.spool_diameter_mm / 2.0
+        d = self.cable_diameter_mm
+
+        theta_max = 2 * math.pi * N
+        k = d / (2 * math.pi)  # dr/dθ, constant
+
+        def integrand(theta):
+            r = R_core + k * theta
+            dr_dtheta = k
+            return math.sqrt(r * r + dr_dtheta * dr_dtheta)
+
+        # Numerical integration via Simpson's rule (even number of intervals)
+        num_intervals = 1000
+        if num_intervals % 2 == 1:
+            num_intervals += 1
+
+        h = theta_max / num_intervals
+        total = integrand(0.0) + integrand(theta_max)
+
+        for i in range(1, num_intervals):
+            theta_i = i * h
+            weight = 4 if i % 2 == 1 else 2
+            total += weight * integrand(theta_i)
+
+        L = (h / 3.0) * total
+        return L
     
-    def get_current_layer_diameter(self, pulse_count):
+    def get_current_layer_radius(pulse_count):
         """
-        Get the effective spool diameter for the current layer being wound.
+        Get the effective spool radius of the current layer being wound.
         
         Args:
             pulse_count: Total pulses
         
         Returns:
-            Diameter in mm (float)
+            Radius mm (float)
         """
         N = pulse_count / self.ppr
-        d = self.spool_diameter_mm
+        d = self.spool_radius_mm
         c = self.cable_diameter_mm
         
         # Current diameter = d + 2c·(N-1)

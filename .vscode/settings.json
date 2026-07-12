@@ -1,0 +1,7 @@
+{
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}",
+    "${workspaceFolder}/Data_Log",
+    "${workspaceFolder}/Motor_control"
+  ]
+}

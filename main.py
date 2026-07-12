@@ -1,4 +1,4 @@
-# main.py — System initialization and control loop
+# main.py | System initialization and control loop
 import machine
 import utime
 import motor_control

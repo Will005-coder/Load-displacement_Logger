@@ -1,4 +1,4 @@
-"""Minimal MicroPython-compatible stub for static analysis."""
+"""Minimal MicroPython-compatible stub for desktop testing."""
 
 
 class Pin:

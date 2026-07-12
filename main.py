@@ -1,10 +1,19 @@
 # main.py | ESP32 entry point for the spool logger
-import machine
-import utime
+import os
+import sys
 from collections import deque
+from Libraries.Data_Log.cable_calc import CableCalculator
+from Libraries.Motor_control.motor_control import MotorController
+from Libraries import utime as utime
+from Libraries import machine as machine
 
-from Data_Log.cable_calc import CableCalculator
-from Motor_control.motor_control import MotorController
+ROOT_DIR = os.path.dirname(__file__)
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
+LIBRARIES_DIR = os.path.join(ROOT_DIR, "Libraries")
+if LIBRARIES_DIR not in sys.path:
+    sys.path.insert(0, LIBRARIES_DIR)
 
 # Configuration
 BAUD_RATE = 115200
@@ -51,6 +60,7 @@ class SpoolLogger:
 
     def handle_command(self, cmd):
         """Process a single serial command."""
+        cmd = cmd.strip()
         if cmd == '+':
             self.motor.set_pwm(255)
         elif cmd == '-':
@@ -58,6 +68,8 @@ class SpoolLogger:
         elif cmd == 'r':
             self.motor.reset_counter()
             self.uart.write("Counter reset.\n")
+        elif cmd:
+            self.uart.write(f"Unknown command: {cmd}\n")
 
     def run(self):
         """Run the main control loop."""

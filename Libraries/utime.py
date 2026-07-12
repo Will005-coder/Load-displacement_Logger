@@ -1,4 +1,4 @@
-"""Minimal MicroPython-compatible shim for time helpers."""
+"""Minimal MicroPython-compatible shim for desktop testing."""
 
 import time
 
@@ -9,6 +9,3 @@ def sleep_ms(ms):
 
 def ticks_ms():
     return time.time_ns() // 1_000_000
-
-
-__all__ = ["sleep_ms", "ticks_ms"]

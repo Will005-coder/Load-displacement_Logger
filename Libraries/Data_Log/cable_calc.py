@@ -49,7 +49,7 @@ class CableCalculator:
         a = self.initial_radius_mm if initial_radius_mm is None else float(initial_radius_mm)
         b = self._radial_growth_rate(
             self.line_thickness_mm if line_thickness_mm is None else float(line_thickness_mm)
-        ) 
+        )
 
         if b == 0.0:
             return abs(theta) * a
@@ -61,7 +61,13 @@ class CableCalculator:
 
         return (r * sqrt_term - a * a_sqrt_term + (b * b) * math.log(ratio)) / (2.0 * b)
 
-    def calculate_line_length(self, theta=None, rotations=None, initial_radius_mm=None, line_thickness_mm=None):
+    def calculate_line_length(
+        self,
+        theta=None,
+        rotations=None,
+        initial_radius_mm=None,
+        line_thickness_mm=None,
+    ):
         """
         Calculate the exact length of the line spooled onto the sheave.
 

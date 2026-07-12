@@ -2,13 +2,14 @@ import machine
 
 
 class MotorController:
-    def __init__(self, pwm_pin, encoder_pin, ppr=20):
+    def __init__(self, pwm_pin, encoder_cha_pin, encoder_chb_pin, ppr=20):
         """
-        Initialize motor and encoder.
+        Initialize motor and quadrature encoder.
 
         Args:
             pwm_pin: GPIO pin for PWM (motor speed control)
-            encoder_pin: GPIO pin for encoder (interrupt)
+            encoder_cha_pin: GPIO pin for encoder Channel A
+            encoder_chb_pin: GPIO pin for encoder Channel B
             ppr: Pulses per rotation
         """
         self.ppr = ppr
@@ -19,15 +20,23 @@ class MotorController:
         self.pwm.freq(1000)
         self.pwm.duty_u16(0)
 
-        self.encoder_pin = machine.Pin(encoder_pin, machine.Pin.IN)
-        self.encoder_pin.irq(
+        self.encoder_cha = machine.Pin(encoder_cha_pin, machine.Pin.IN)
+        self.encoder_chb = machine.Pin(encoder_chb_pin, machine.Pin.IN)
+        self.encoder_cha.irq(
             handler=self._encoder_isr,
             trigger=machine.Pin.IRQ_RISING,
         )
 
     def _encoder_isr(self, pin):
-        """Interrupt service routine for rising encoder pulses."""
-        self.pulse_count += 1
+        """Interrupt service routine for quadrature encoder pulses."""
+        # Read both channels to determine direction
+        cha = self.encoder_cha.value()
+        chb = self.encoder_chb.value()
+        # If CHA and CHB are same state, we're moving forward
+        if cha == chb:
+            self.pulse_count += 1
+        else:
+            self.pulse_count -= 1
 
     def get_pulse_count(self):
         """Get current pulse count."""

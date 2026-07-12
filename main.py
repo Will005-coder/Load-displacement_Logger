@@ -22,10 +22,11 @@ BAUD_RATE = 115200
 LOG_INTERVAL_MS = 100
 BUFFER_SIZE = 10
 MOTOR_PWM_PIN = 4
-MOTOR_ENCODER_PIN = 5
-MOTOR_PPR = 20
-SPOOL_DIAMETER_MM = 50.0
-LINE_THICKNESS_MM = 1.0
+MOTOR_ENCODER_CHA_PIN = 10
+MOTOR_ENCODER_CHB_PIN = 9
+MOTOR_PPR = 5,281.1 
+SPOOL_DIAMETER_MM = 54.61
+LINE_THICKNESS_MM = 4.7625
 
 
 class SpoolLogger:
@@ -35,7 +36,8 @@ class SpoolLogger:
         self.uart = machine.UART(0, BAUD_RATE)
         self.motor = MotorController(
             pwm_pin=MOTOR_PWM_PIN,
-            encoder_pin=MOTOR_ENCODER_PIN,
+            encoder_cha_pin=MOTOR_ENCODER_CHA_PIN,
+            encoder_chb_pin=MOTOR_ENCODER_CHB_PIN,
             ppr=MOTOR_PPR,
         )
         self.calculator = CableCalculator(

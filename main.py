@@ -2,10 +2,6 @@
 import os
 import sys
 from collections import deque
-from Libraries.Data_Log.cable_calc import CableCalculator
-from Libraries.Motor_control.motor_control import MotorController
-from Libraries import utime as utime
-from Libraries import machine as machine
 
 ROOT_DIR = os.path.dirname(__file__)
 if ROOT_DIR not in sys.path:
@@ -14,6 +10,12 @@ if ROOT_DIR not in sys.path:
 LIBRARIES_DIR = os.path.join(ROOT_DIR, "Libraries")
 if LIBRARIES_DIR not in sys.path:
     sys.path.insert(0, LIBRARIES_DIR)
+
+from Libraries.Data_Log.cable_calc import CableCalculator
+from Libraries.Motor_control.motor_control import MotorController
+from Libraries import utime as utime
+from Libraries import machine as machine
+
 
 # Configuration
 BAUD_RATE = 115200
@@ -58,6 +60,7 @@ class SpoolLogger:
         msg = (
             f"Pulses: {pulse_count:5d} | Displacement: {displacement:7.2f}mm | "
             f"Avg: {avg_displacement:7.2f}mm\n"
+
         )
         self.uart.write(msg)
 

@@ -24,7 +24,7 @@ BUFFER_SIZE = 10
 MOTOR_PWM_PIN = 4
 MOTOR_ENCODER_CHA_PIN = 10
 MOTOR_ENCODER_CHB_PIN = 9
-MOTOR_PPR = 5,281.1 
+MOTOR_PPR = 5281.1 
 SPOOL_DIAMETER_MM = 54.61
 LINE_THICKNESS_MM = 4.7625
 
@@ -105,12 +105,25 @@ class SpoolLogger:
         self.csv_logging_enabled = False
         self.uart.write("CSV logging stopped.\n")
 
+    def _dump_csv_to_uart(self):
+        """Read and send the CSV file contents over UART."""
+        try:
+            with open(self.csv_log_path, 'r') as f:
+                self.uart.write(f"--- CSV Dump: {self.csv_log_path} ---\n")
+                for line in f:
+                    self.uart.write(line)
+                self.uart.write("--- End of CSV ---\n")
+        except OSError:
+            self.uart.write(f"Error: Could not open {self.csv_log_path}\n")
+
     def handle_command(self, cmd):
         """Process a single serial command.
         Expected commands:
             '+': Start motor at full speed
             '-': Stop motor
             'r': Reset pulse counter
+            'c': Toggle CSV logging
+            'd': Dump CSV file contents over UART
             '0'-'255': Set motor speed (PWM duty cycle)
         """
         cmd = cmd.strip()
@@ -123,6 +136,8 @@ class SpoolLogger:
                 self._stop_csv_logging()
             else:
                 self._start_csv_logging()
+        elif cmd == 'd':
+            self._dump_csv_to_uart()
         elif cmd.isdigit():
             self.motor.set_pwm(int(cmd) * 0.3)  # Scale to 0-85 range
         elif cmd == 'r':

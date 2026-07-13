@@ -1,14 +1,14 @@
 # main.py | ESP32 entry point for the spool logger
 from collections import deque
 
-# MicroPython path setup
-try:
-    import sys
-    if getattr(sys, 'path', None) is not None:
-        sys.path.insert(0, '')  # Current directory
-        sys.path.insert(0, 'Libraries')
-except Exception:
-    pass
+# # MicroPython path setup
+# try:
+#     import sys
+#     if getattr(sys, 'path', None) is not None:
+#         sys.path.insert(0, '')  # Current directory
+#         sys.path.insert(0, 'Libraries')
+# except Exception:
+#     pass
 
 from Libraries.Data_Log.cable_calc import CableCalculator
 from Libraries.Motor_control.motor_control import MotorController
@@ -21,8 +21,8 @@ BAUD_RATE = 115200
 LOG_INTERVAL_MS = 100
 BUFFER_SIZE = 10
 MOTOR_PWM_PIN = 4
-MOTOR_ENCODER_CHA_PIN = 10
-MOTOR_ENCODER_CHB_PIN = 9
+MOTOR_ENCODER_CHA_PIN = 1
+MOTOR_ENCODER_CHB_PIN = 0
 MOTOR_PPR = 5281.1 
 SPOOL_DIAMETER_MM = 54.61
 LINE_THICKNESS_MM = 4.7625

@@ -1,10 +1,14 @@
 # main.py | ESP32 entry point for the spool logger
-import sys
 from collections import deque
 
 # MicroPython path setup
-sys.path.insert(0, '')  # Current directory
-sys.path.insert(0, 'Libraries')
+try:
+    import sys
+    if getattr(sys, 'path', None) is not None:
+        sys.path.insert(0, '')  # Current directory
+        sys.path.insert(0, 'Libraries')
+except Exception:
+    pass
 
 from Libraries.Data_Log.cable_calc import CableCalculator
 from Libraries.Motor_control.motor_control import MotorController

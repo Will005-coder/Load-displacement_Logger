@@ -12,8 +12,16 @@ from collections import deque
 
 from Libraries.Data_Log.cable_calc import CableCalculator
 from Libraries.Motor_control.motor_control import MotorController
-from Libraries import utime as utime
-from Libraries import machine as machine
+
+try:
+    import utime
+except ImportError:
+    from Libraries import utime
+
+try:
+    import machine
+except ImportError:
+    from Libraries import machine
 
 
 # Configuration

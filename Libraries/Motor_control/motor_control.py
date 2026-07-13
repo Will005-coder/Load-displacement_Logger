@@ -1,4 +1,7 @@
-import machine
+try:
+    import machine
+except ImportError:
+    from Libraries import machine
 
 
 class MotorController:

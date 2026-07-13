@@ -1,5 +1,6 @@
 # main.py | ESP32 entry point for the spool logger
 from collections import deque
+import sys
 
 # # MicroPython path setup
 # try:
@@ -185,5 +186,5 @@ def main():
     logger.run()
 
 
-if __name__ == '__main__':
+if __name__ == '__main__' or getattr(sys.implementation, 'name', '') == 'micropython':
     main()

@@ -2,10 +2,6 @@
 	"folders": [
 		{
 			"path": "."
-		},
-		{
-			"name": "serial:/COM13",
-			"uri": "serial://com13/"
 		}
 	],
 	"settings": {}

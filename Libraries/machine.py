@@ -37,4 +37,7 @@ class UART:
         return b""
 
     def write(self, data):
+        if isinstance(data, bytes):
+            data = data.decode()
+        print(data, end="")
         return len(data)
